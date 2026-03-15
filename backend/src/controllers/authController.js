@@ -1,5 +1,6 @@
 const User = require("../models/User.js");
 const { createToken } = require("../libs/utils.js");
+const sendWelcomeEmail = require("../emails/emailHandlers.js");
 
 function handleError(error) {
   console.log(error.message);
@@ -36,6 +37,9 @@ async function signupPost(req, res) {
       sameSite: "strict",
       secure: true,
     });
+
+    await sendWelcomeEmail(email, fullName, process.env.CLIENT_URL);
+
     res.status(201).json({ user: user._id });
   } catch (error) {
     const err = handleError(error);
