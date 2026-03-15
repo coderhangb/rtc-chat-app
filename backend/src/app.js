@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 // middlewares
 app.use(express.json());
 app.use(cookieParser());
+app.use("/public", express.static("src/public"));
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
 
