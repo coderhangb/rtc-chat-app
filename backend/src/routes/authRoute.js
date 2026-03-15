@@ -5,12 +5,8 @@ const router = Router();
 
 router.route("/signup").post(authController.signupPost);
 
-router.route("/login").get((req, res) => {
-  res.send("Login");
-});
+router.route("/login").post(authController.loginPost);
 
-router.route("/logout").get((req, res) => {
-  res.send("Log Out");
-});
+router.route("/logout").post(authController.logoutPost);
 
 module.exports = router;
