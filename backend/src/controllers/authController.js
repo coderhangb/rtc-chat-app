@@ -10,6 +10,16 @@ function handleError(error) {
     password: "",
   };
 
+  // incorrect email/password
+  if (
+    error.message === "Incorrect email" ||
+    error.message === "Incorrect password"
+  ) {
+    err.email = "Invalid email or password";
+    err.password = "Invalid email or password";
+    return err;
+  }
+
   // duplicate error code
   if (error.code === 11000) {
     err.email =
@@ -47,6 +57,30 @@ async function signupPost(req, res) {
   }
 }
 
+async function loginPost(req, res) {
+  const { email, password } = req.body;
+  try {
+    const user = await User.login(email, password);
+    res.cookie("jwt", createToken(user._id), {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      sameSite: "strict",
+      secure: true,
+    });
+    res.status(200).json({ user: user._id });
+  } catch (error) {
+    const err = handleError(error);
+    res.status(400).json(err);
+  }
+}
+
+async function logoutPost(req, res) {
+  res.cookie("jwt", "", { maxAge: 1 });
+  res.status(200).json({ message: "Logout success" });
+}
+
 module.exports = {
   signupPost,
+  loginPost,
+  logoutPost,
 };
