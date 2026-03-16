@@ -1,6 +1,7 @@
 const User = require("../models/User.js");
 const { createToken } = require("../libs/utils.js");
 const sendWelcomeEmail = require("../emails/emailHandlers.js");
+const cloudinary = require("../libs/cloudinary.js");
 
 function handleError(error) {
   console.log(error.message);
@@ -79,8 +80,29 @@ async function logoutPost(req, res) {
   res.status(200).json({ message: "Logout success" });
 }
 
+async function updateProfile(req, res) {
+  try {
+    const profileAvatar = req.body.profileAvatar;
+    if (!profileAvatar)
+      return res.status(400).json({ message: "Profile avatar is required" });
+
+    const userId = req.user._id;
+    const uploadResponse = await cloudinary.uploader.upload(profileAvatar);
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profileAvatar: uploadResponse.secure_url },
+      { new: true }, // return user sau khi update
+    );
+    res.status(200).json({ updatedUser });
+  } catch (error) {
+    console.log("Update profile error", error);
+    res.status(500).json({ message: "Upload fail due to server error" });
+  }
+}
+
 module.exports = {
   signupPost,
   loginPost,
   logoutPost,
+  updateProfile,
 };
