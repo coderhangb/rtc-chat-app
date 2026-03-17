@@ -1,8 +1,11 @@
 const { Router } = require("express");
 const authController = require("../controllers/authController.js");
 const authMiddleware = require("../middlewares/authMiddleware.js");
+const arcjetMiddleware = require("../middlewares/arcjetMiddleware.js");
 
 const router = Router();
+
+router.use(arcjetMiddleware);
 
 router.route("/signup").post(authController.signupPost);
 
