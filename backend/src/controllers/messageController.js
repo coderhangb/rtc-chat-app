@@ -71,6 +71,10 @@ const sendMessage = async (req, res) => {
     const senderId = req.user._id;
     const { id: receiverId } = req.params;
 
+    if (!text?.trim() && !image) {
+      return res.status(400).json({ message: "Can not send empty message" });
+    }
+
     let imageUrl;
     if (image) {
       const uploadResponse = await cloudinary.uploader.upload(image);
