@@ -45,13 +45,18 @@ async function signupPost(req, res) {
     res.cookie("jwt", createToken(user._id), {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 7,
-      sameSite: "strict",
+      sameSite: "none",
       secure: true,
     });
 
     await sendWelcomeEmail(email, fullName, process.env.CLIENT_URL);
 
-    res.status(201).json({ user: user._id });
+    res.status(201).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profileAvatar: user.profileAvatar,
+    });
   } catch (error) {
     const err = handleError(error);
     res.status(400).json(err);
@@ -65,10 +70,15 @@ async function loginPost(req, res) {
     res.cookie("jwt", createToken(user._id), {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 7,
-      sameSite: "strict",
+      sameSite: "none",
       secure: true,
     });
-    res.status(200).json({ user: user._id });
+    res.status(200).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profileAvatar: user.profileAvatar,
+    });
   } catch (error) {
     const err = handleError(error);
     res.status(400).json(err);
@@ -92,7 +102,7 @@ async function updateProfile(req, res) {
       userId,
       { profileAvatar: uploadResponse.secure_url },
       { new: true }, // return user sau khi update
-    );
+    ).select("-password");
     res.status(200).json({ updatedUser });
   } catch (error) {
     console.log("Update profile error", error);
