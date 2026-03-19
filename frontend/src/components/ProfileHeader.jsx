@@ -1,5 +1,108 @@
+import { useState, useRef } from "react";
+import {
+  LogOutIcon,
+  VolumeOffIcon,
+  Volume2Icon,
+  LoaderCircle,
+} from "lucide-react";
+import { useAuthStore } from "../store/useAuthStore";
+import { useChatStore } from "../store/useChatStore";
+
+const mouseClickSound = new Audio("./sound/mouse-click.mp3");
+mouseClickSound.volume = 0.5;
+
 function ProfileHeader() {
-  return <div>ProfileHeader</div>;
+  const { logout, authUser, updateProfile, isUploadingAvatar } = useAuthStore();
+  const { isSoundEnable, toggleSound } = useChatStore();
+  const [selectedImg, setSelectedImg] = useState(null);
+  const fileInputRef = useRef(null);
+
+  // upload img handle
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+      const base64Image = reader.result;
+      setSelectedImg(base64Image);
+      await updateProfile({ profileAvatar: base64Image });
+    };
+  };
+
+  return (
+    <div className="p-6 border-b border-slate-700/50">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {/* AVATAR */}
+          <div className="avatar online">
+            <button
+              className="size-14 rounded-full overflow-hidden relative group"
+              onClick={() => {
+                fileInputRef.current.click();
+              }}
+            >
+              {isUploadingAvatar ? (
+                <div className="flex items-center justify-center size-full border border-slate-400 rounded-full">
+                  <LoaderCircle className="animate-spin" />
+                </div>
+              ) : (
+                <img
+                  src={selectedImg || authUser.profileAvatar || "./avatar.png"}
+                  className="size-full object-cover"
+                />
+              )}
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                <span className="text-white text-xs">Change</span>
+              </div>
+            </button>
+
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+          </div>
+
+          {/* USERNAME & ONLINE TEXT */}
+          <div>
+            <h3 className="text-slate-200 font-medium text-base max-w-[180px] truncate">
+              {authUser.fullName}
+            </h3>
+            <p className="text-slate-400 text-xs">Online</p>
+          </div>
+        </div>
+
+        {/* BUTTON */}
+        <div className="flex gap-4 items-center">
+          {/* LOGOUT BTN */}
+          <button
+            className="text-slate-400 hover:text-slate-200 transition-colors"
+            onClick={logout}
+          >
+            <LogOutIcon className="size-5" />
+          </button>
+
+          {/* SOUND BTN */}
+          <button
+            className="text-slate-400 hover:text-slate-200 transition-colors"
+            onClick={() => {
+              mouseClickSound.currentTime = 0;
+              mouseClickSound.play().catch((error) => {
+                console.log("Audio play fail", error);
+              });
+              toggleSound();
+            }}
+          >
+            {isSoundEnable ? <Volume2Icon /> : <VolumeOffIcon />}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default ProfileHeader;

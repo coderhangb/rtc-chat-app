@@ -10,7 +10,7 @@ export const useChatStore = create((set, get) => ({
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
-  isSoundEnable: true,
+  isSoundEnable: false,
 
   toggleSound: () => {
     set((state) => ({

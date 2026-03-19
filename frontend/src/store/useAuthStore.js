@@ -7,6 +7,7 @@ export const useAuthStore = create((set) => ({
   isCheckingAuth: true,
   isSigningUp: false,
   isLoggingIn: false,
+  isUploadingAvatar: false,
 
   checkAuth: async () => {
     try {
@@ -63,6 +64,21 @@ export const useAuthStore = create((set) => ({
       toast.success(res.data.message);
     } catch (error) {
       toast.error("Logout fail");
+    }
+  },
+
+  updateProfile: async (data) => {
+    set({ isUploadingAvatar: true });
+    try {
+      const res = await axiosInstance.put("/api/auth/update-profile", data);
+      set({ authUser: res.data.updatedUser });
+
+      // toast from react hot toast
+      toast.success("Upload avatar success!");
+    } catch (error) {
+      toast.error("Upload avatar fail");
+    } finally {
+      set({ isUploadingAvatar: false });
     }
   },
 }));
