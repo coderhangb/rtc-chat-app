@@ -101,7 +101,7 @@ async function updateProfile(req, res) {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { profileAvatar: uploadResponse.secure_url },
-      { new: true }, // return user sau khi update
+      { returnDocument: "after" }, // return user sau khi update
     ).select("-password");
     res.status(200).json({ updatedUser });
   } catch (error) {
