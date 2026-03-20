@@ -22,7 +22,7 @@ export const useChatStore = create((set, get) => ({
     set({ activeTab: tab });
   },
 
-  setSelectesUser: (user) => {
+  setSelectedUser: (user) => {
     set({ selectedUser: user });
   },
 
@@ -39,12 +39,24 @@ export const useChatStore = create((set, get) => ({
   },
 
   getChatPartner: async () => {
-    set({ isMessagesLoading: true });
+    set({ isUsersLoading: true });
     try {
       const res = await axiosInstance.get("/api/message/chat");
       set({ chats: [...res.data] });
     } catch (error) {
       toast.error("Load contacts fail");
+    } finally {
+      set({ isUsersLoading: false });
+    }
+  },
+
+  getMessagesByUserId: async (id) => {
+    set({ isMessagesLoading: true });
+    try {
+      const res = await axiosInstance.get(`/api/message/${id}`);
+      set({ messages: [...res.data] });
+    } catch (error) {
+      toast.error("Load messages fail");
     } finally {
       set({ isMessagesLoading: false });
     }

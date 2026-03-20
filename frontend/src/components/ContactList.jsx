@@ -4,7 +4,7 @@ import NoChatsFound from "./NoChatsFound";
 import { useChatStore } from "../store/useChatStore";
 
 function ContactList() {
-  const { getAllContact, allContacts, isUsersLoading, setSelectesUser } =
+  const { getAllContact, allContacts, isUsersLoading, setSelectedUser } =
     useChatStore();
 
   useEffect(() => {
@@ -22,7 +22,7 @@ function ContactList() {
           <div
             key={contact._id}
             className="bg-cyan-500/10 p-4 rounded-lg cursor-pointer hover:bg-cyan-500/20 transition-colors"
-            onClick={() => setSelectesUser(contact)}
+            onClick={() => setSelectedUser(contact)}
           >
             <div className="flex items-center gap-3">
               <div className={`avatar online`}>
