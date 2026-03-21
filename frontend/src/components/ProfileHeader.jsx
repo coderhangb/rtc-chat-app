@@ -23,12 +23,12 @@ function ProfileHeader() {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.readAsDataURL(file);
     reader.onloadend = async () => {
       const base64Image = reader.result;
       setSelectedImg(base64Image);
       await updateProfile({ profileAvatar: base64Image });
     };
+    reader.readAsDataURL(file);
   };
 
   return (
