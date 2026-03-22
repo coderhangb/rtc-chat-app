@@ -1,6 +1,7 @@
 const Message = require("../models/Message.js");
 const User = require("../models/User.js");
 const cloudinary = require("../libs/cloudinary.js");
+const { getReceiverSocketId, io } = require("../libs/socket.js");
 
 const getAllContact = async (req, res) => {
   try {
@@ -87,6 +88,12 @@ const sendMessage = async (req, res) => {
       text,
       image: imageUrl,
     });
+
+    // real-time message sending
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
 
     res.status(201).json(newMessage);
   } catch (error) {
