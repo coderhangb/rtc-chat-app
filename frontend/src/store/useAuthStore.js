@@ -1,18 +1,22 @@
 import { create } from "zustand";
-import { axiosInstance } from "../libs/axios.js";
 import toast from "react-hot-toast";
+import { io } from "socket.io-client";
+import { axiosInstance } from "../libs/axios.js";
 
-export const useAuthStore = create((set) => ({
+export const useAuthStore = create((set, get) => ({
   authUser: null,
   isCheckingAuth: true,
   isSigningUp: false,
   isLoggingIn: false,
   isUploadingAvatar: false,
+  socket: null,
+  onlineUser: [],
 
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/api/auth/check");
       set({ authUser: res.data });
+      get().connectSocket();
     } catch (error) {
       console.log("Error in checkAuth", error);
       set({ authUser: null });
@@ -29,6 +33,8 @@ export const useAuthStore = create((set) => ({
 
       // toast from react hot toast
       toast.success("Account created successfully!");
+
+      get().connectSocket();
     } catch (error) {
       toast.error(
         error.response.data.fullName ||
@@ -48,6 +54,8 @@ export const useAuthStore = create((set) => ({
 
       // toast from react hot toast
       toast.success("Login successfully!");
+
+      get().connectSocket();
     } catch (error) {
       toast.error(error.response.data.email || error.response.data.password);
     } finally {
@@ -62,6 +70,8 @@ export const useAuthStore = create((set) => ({
 
       // toast from react hot toast
       toast.success(res.data.message);
+
+      get().disconnectSocket();
     } catch (error) {
       toast.error("Logout fail");
     }
@@ -80,5 +90,26 @@ export const useAuthStore = create((set) => ({
     } finally {
       set({ isUploadingAvatar: false });
     }
+  },
+
+  connectSocket: () => {
+    const { authUser } = get();
+    if (!authUser || get().socket?.connected) return;
+
+    const socket = io("http://localhost:3000", {
+      withCredentials: true,
+    });
+
+    socket.connect();
+
+    set({ socket });
+
+    socket.on("userOnline", (userIdList) => {
+      set({ onlineUser: userIdList });
+    });
+  },
+
+  disconnectSocket: () => {
+    if (get().socket?.connected) get().socket.disconnect();
   },
 }));
