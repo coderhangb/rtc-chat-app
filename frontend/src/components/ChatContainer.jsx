@@ -7,14 +7,29 @@ import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 
 function ChatContainer() {
-  const { selectedUser, getMessagesByUserId, messages, isMessagesLoading } =
-    useChatStore();
+  const {
+    selectedUser,
+    getMessagesByUserId,
+    messages,
+    isMessagesLoading,
+    subscribeToMessage,
+    unSubscribeToMessage,
+  } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
 
   useEffect(() => {
     getMessagesByUserId(selectedUser._id);
-  }, [selectedUser, getMessagesByUserId]);
+    subscribeToMessage();
+
+    // cleanup
+    return () => unSubscribeToMessage();
+  }, [
+    selectedUser,
+    getMessagesByUserId,
+    subscribeToMessage,
+    unSubscribeToMessage,
+  ]);
 
   useEffect(() => {
     if (messageEndRef.current)
