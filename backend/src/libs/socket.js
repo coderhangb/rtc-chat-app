@@ -21,6 +21,11 @@ io.use(socketAuthMiddleware);
 // store online user
 const userSocketMap = {}; // {userId: [socketId1, socketId2, ...]}
 
+// check if user online
+function getReceiverSocketId(userId) {
+  return userSocketMap[userId];
+}
+
 io.on("connection", (socket) => {
   console.log("User connected", socket.user.fullName);
 
@@ -53,4 +58,5 @@ module.exports = {
   app,
   server,
   io,
+  getReceiverSocketId,
 };
