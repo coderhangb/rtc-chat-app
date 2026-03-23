@@ -10,6 +10,8 @@ const connectDB = require("./libs/db.js");
 
 const PORT = process.env.PORT || 3000;
 
+app.set("trust proxy", 1);
+
 // middlewares
 app.use(
   cors({
