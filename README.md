@@ -1,4 +1,4 @@
-# 🔐 RTC Chat App
+# 💬 RTC Chat App
 
 A real-time chat application built with MERN stack and Socket.IO.
 
