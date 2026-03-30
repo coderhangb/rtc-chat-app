@@ -1,3 +1,12 @@
+# ⚠️ Warning
+This project uses cookies for authentication.
+
+When deploying frontend and backend on different domains (cross-domain), **Chrome and some brownsers currently block these cookies**, causing authentication issues.
+
+At the time I deploy this website, **FireFox still allow these cookies**, but it may also block them in the future due to stricter privacy policies.
+
+If that happens, I will update authentication approach to return and store tokens directly from the backend (e.g., via Authorization headers) instead of relying on cookies or redeploy the app on a same-site domain.
+
 # 💬 RTC Chat App
 
 A real-time chat application built with MERN stack and Socket.IO.
@@ -99,12 +108,4 @@ https://echotalk-rtc-chat-app.vercel.app/
 - Implement **refresh tokens**
 - Implement **email verification and password reset**
 
-# ⚠️ Note
-This project uses cookies for authentication.
-
-When deploying frontend and backend on different domains (cross-domain), **Chrome currently block these cookies**, causing authentication issues.
-
-At the time I deploy this website, **FireFox still allow these cookies**, but it may also block them in the future due to stricter privacy policies.
-
-If that happens, I will update authentication approach to return and store tokens directly from the backend (e.g., via Authorization headers) instead of relying on cookies.
 
